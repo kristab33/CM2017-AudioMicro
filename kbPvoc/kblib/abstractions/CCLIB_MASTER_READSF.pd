@@ -1,0 +1,115 @@
+#N canvas 71 50 926 604 12;
+#X msg 27 424 open \$1;
+#X msg 115 316 start;
+#X msg 254 360 stop;
+#X msg 617 348 print;
+#X obj 12 6 cnv 15 300 60 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#X obj 315 7 cnv 15 250 190 empty empty empty 20 12 0 14 -262131 -66577
+0;
+#X text 337 26 State 0 ---> closed;
+#X text 356 38 send open fname message;
+#X text 339 74 State 1 ---> open;
+#X text 359 91 send start message or;
+#X text 358 105 send another open message;
+#X text 354 152 send stop message;
+#X obj 585 416 cnv 15 200 60 empty empty empty 20 12 0 14 -261689 -66577
+0;
+#X text 597 419 send messages here for;
+#X text 593 430 direct access;
+#X text 340 138 State 2 ---> streaming;
+#X symbolatom 24 227 20 0 0 0 - - -, f 20;
+#X symbolatom 14 388 40 0 0 0 - - -, f 40;
+#X obj 24 84 inlet;
+#X text 75 85 inlet is always a bang;
+#X obj 24 119 bng 30 250 50 0 empty empty empty 0 -6 0 8 -261681 -262131
+-1;
+#X obj 24 257 select 0-CLOSED 1-OPEN 2-STREAMING;
+#X obj 369 513 cnv 15 100 60 empty empty empty 20 12 0 14 -225280 -66577
+0;
+#X text 40 300 OPEN;
+#X text 607 226 update our state;
+#X msg 29 489 OPENING \$1;
+#X obj 611 550 loadbang;
+#X obj 24 302 bng 15 250 50 0 empty RSF_OpenBng RSF_OpenBng 0 -6 0
+8 -262144 -1 -1;
+#X obj 114 299 bng 15 250 50 0 empty RSF_StartBng RSF_StartBng 0 -6
+0 8 -262144 -1 -1;
+#X obj 203 299 bng 15 250 50 0 empty RSF_StopBng RSF_StopBng 0 -6 0
+8 -262144 -1 -1;
+#X text 129 297 START;
+#X text 221 299 STOP;
+#X text 29 160 UPDATE YE OLDE STATE;
+#X text 14 12 CCLIB_MASTER_READSF.pd;
+#X text 13 26 Abstraction for Streaming INPUT;
+#X obj 24 341 openpanel;
+#X msg 27 450 \; cbReadSF_NewState symbol 1-OPEN;
+#X obj 29 519 print CCLIB_MASTER_READSF;
+#X msg 116 337 \; cbReadSF_NewState symbol 2-STREAMING;
+#X msg 254 419 \; cbReadSF_NewState symbol 0-CLOSED;
+#X msg 611 577 \; cbReadSF_NewState symbol 0-CLOSED;
+#X obj 593 449 r cbReadSF_Inlet;
+#X obj 605 243 r cbReadSF_NewState;
+#X msg 652 270 \; cbReadSF_State set \$1;
+#X obj 377 479 readsf~ 1 1.67772e+007;
+#X text 375 523 Audio Output;
+#X obj 378 547 outlet~;
+#X obj 548 509 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
+-1;
+#X text 567 508 completed;
+#X obj 46 191 r cbReadSF_State;
+#X obj 606 385 outlet;
+#X text 15 40 CCAMPBELL 60202;
+#X obj 604 26 inlet;
+#X text 21 67 INLET 1;
+#X obj 604 46 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
+-1;
+#X obj 604 80 nbx 5 14 -1e+037 1e+037 0 0 empty ok_to_reopen ok_to_reopen
+0 -6 0 10 -262144 -1 -1 0 256;
+#X obj 604 94 select 1;
+#X text 598 7 INLET 2 (restart);
+#X msg 31 570 \; ok_to_reopen set 1;
+#X obj 26 366 r RSF_Reopen;
+#X obj 604 119 t b b;
+#X msg 639 147 \; RSF_Reopen bang;
+#X msg 640 185 \; RSF_StartBng bang;
+#X text 787 147 reopen;
+#X text 792 187 then start;
+#X connect 0 0 36 0;
+#X connect 0 0 44 0;
+#X connect 0 0 58 0;
+#X connect 1 0 38 0;
+#X connect 1 0 44 0;
+#X connect 2 0 39 0;
+#X connect 2 0 44 0;
+#X connect 3 0 44 0;
+#X connect 16 0 21 0;
+#X connect 17 0 0 0;
+#X connect 17 0 25 0;
+#X connect 18 0 20 0;
+#X connect 20 0 16 0;
+#X connect 21 0 27 0;
+#X connect 21 1 28 0;
+#X connect 21 2 29 0;
+#X connect 25 0 37 0;
+#X connect 26 0 40 0;
+#X connect 27 0 35 0;
+#X connect 28 0 1 0;
+#X connect 29 0 2 0;
+#X connect 35 0 17 0;
+#X connect 41 0 44 0;
+#X connect 42 0 43 0;
+#X connect 42 0 3 0;
+#X connect 42 0 50 0;
+#X connect 44 0 46 0;
+#X connect 44 1 47 0;
+#X connect 47 0 20 0;
+#X connect 49 0 16 0;
+#X connect 52 0 54 0;
+#X connect 54 0 55 0;
+#X connect 55 0 56 0;
+#X connect 56 0 60 0;
+#X connect 56 1 62 0;
+#X connect 59 0 17 0;
+#X connect 60 0 62 0;
+#X connect 60 1 61 0;

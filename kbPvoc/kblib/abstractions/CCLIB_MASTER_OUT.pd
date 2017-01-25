@@ -1,0 +1,76 @@
+#N canvas 795 50 508 592 12;
+#X obj 25 233 *~;
+#X obj 73 181 dbtorms;
+#X obj 80 105 pack 0 50;
+#X obj 80 135 line~;
+#X obj 24 334 clip~ -0.5 0.5;
+#X msg 672 199 \; pd dsp \$1;
+#X text 667 142 audio computation;
+#X obj 72 212 pack 0 50;
+#X obj 71 238 line~;
+#X obj 178 133 + 1;
+#X text 278 101 Mute - toggle reversed by setting checked = -1 and
+adding 1;
+#X text 231 204 Master Volume 0-100Db Normalized to rms 0 - 1;
+#X text 203 239 TableOutput;
+#X obj 205 262 r gtgl_view_output;
+#X obj 205 296 metro 50;
+#X obj 205 365 tabwrite~ tblMasterOut;
+#X obj 672 166 r gtgl_audio_on-off;
+#X obj 146 178 r ghsl_mastervol;
+#X obj 177 103 r gtgl_mute;
+#X obj 50 268 r gvsl_limiter;
+#X obj 52 304 * -1;
+#X obj 22 117 *~;
+#X obj 21 68 inlet~;
+#X obj 25 561 outlet~;
+#X obj 673 282 loadbang;
+#X obj 673 314 bng 15 250 50 0 empty empty empty 20 8 0 8 -262144 -1
+-1;
+#X msg 812 285 \; pd dsp 0;
+#X obj 121 450 env~;
+#X obj 121 564 s gvu_master_r;
+#X obj 121 481 rmstodb;
+#X obj 121 526 - 135;
+#X floatatom 190 505 5 0 0 0 - - -, f 5;
+#X obj 104 68 catch~ cbMasterOut;
+#X text 402 18 NOTE: dac~ moved outside abstration. Requires that outlet
+be attached to dac~;
+#X text 15 12 CCLIB_MASTER_OUT.pd Abstraction containing the implementation
+of the OutputControls;
+#X msg 674 400 \; tblMasterOut xticks 0 5 10 \, yticks 0 0.25 1 \,
+xlabel -1.1 0 25 50 75 100 128 \, ylabel -5 -1 -0.75 -0.5 -0.25 0.25
+0.5 0.75 1;
+#X text 669 253 INITIALIZE OUTPUT CONTROLS ON LOAD;
+#X text 121 427 Meter Output;
+#X msg 813 335 \; gvsl_limiter_r 0.99 \; gtgl_mute 1 \, 0;
+#X connect 0 0 4 0;
+#X connect 1 0 7 0;
+#X connect 2 0 3 0;
+#X connect 3 0 21 1;
+#X connect 4 0 15 0;
+#X connect 4 0 23 0;
+#X connect 4 0 27 0;
+#X connect 7 0 8 0;
+#X connect 8 0 0 1;
+#X connect 9 0 2 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 16 0 5 0;
+#X connect 17 0 1 0;
+#X connect 18 0 9 0;
+#X connect 19 0 20 0;
+#X connect 19 0 4 2;
+#X connect 20 0 4 1;
+#X connect 21 0 0 0;
+#X connect 22 0 21 0;
+#X connect 24 0 25 0;
+#X connect 25 0 35 0;
+#X connect 25 0 38 0;
+#X connect 25 0 26 0;
+#X connect 25 0 31 0;
+#X connect 27 0 29 0;
+#X connect 29 0 30 0;
+#X connect 30 0 28 0;
+#X connect 31 0 30 0;
+#X connect 32 0 21 0;

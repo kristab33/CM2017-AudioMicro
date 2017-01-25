@@ -1,0 +1,28 @@
+#N canvas 66 98 229 322 12;
+#X obj -1 0 cnv 15 225 50 empty empty empty 20 12 0 14 -228992 -66577
+0;
+#X obj -2 117 cnv 15 225 200 empty empty empty 20 12 0 14 -262131 -66577
+0;
+#X obj -2 54 cnv 15 225 60 empty empty empty 20 12 0 14 -257472 -66577
+0;
+#X floatatom 4 276 5 0 0;
+#X obj 1 58 tgl 20 0 gtgl_audio_on-off empty Audio 0 30 130 10 -261681
+-33289 -1 0 1;
+#X obj 30 143 tgl 20 0 gtgl_mute empty Mute 0 30 130 10 -261681 -1
+-1 0 -1;
+#X obj 45 58 tgl 20 0 gtgl_view_output empty View_Output 21 10 130
+10 -261681 -1 -1 0 1;
+#X obj 46 83 table tblMasterOut 128;
+#X obj 123 151 vsl 15 111 0 0.99 0 0 gvsl_limiter gvsl_limiter_r Limiter
+0 -10 194 10 -261681 -1 -1 3756 1;
+#X floatatom 123 275 6 0 0;
+#X text 4 5 CCLIB_MASTER_CONTROLS;
+#X text 3 23 for CCLIB_MASTER_OUT;
+#X obj 4 145 vsl 15 111 0 127 0 0 ghsl_mastervol empty Volume 0 -10
+128 8 -261681 -1 -1 9900 1;
+#X obj 60 144 vu 15 120 gvu_master_r empty 35 8 64 8 -233017 -1 0 0
+;
+#X floatatom 59 276 5 0 0;
+#X connect 8 0 9 0;
+#X connect 12 0 3 0;
+#X connect 13 0 14 0;

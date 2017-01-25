@@ -1,0 +1,47 @@
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\	
+\\	CC_LIB_NOTES.txt - Chris Campbell's PureData Library Patches
+\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\
+\\	LAST UPDATE: 6:45 PM 2/3/2002 Musicbox
+\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\
+\\	LATEST NOTES: Get this file up to date
+\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+----------------------------------------------------------------------------------
+ENVELOPE GENERATORS:
+	
+1) CCLIB_ADSR_ENV.PD & CCLIB_ADSR_IMPL.PD - simple adsr envelope generator
+	-needs work - the interface needs to be 2 separate arrays
+	
+----------------------------------------------------------------------------------
+SYNTHESIS:
+1) CCLIB_FMMOD_ADD.PD - simple fm modulator abstration
+2) CCLIB_MIDIOSC.pd - simple abstraction for single oscillator - 
+	takes midi note value and velocity as inputs 
+3) CCLIB_MIDIOSC_ENV.pd - CCLIB_MIDIOSC.pd whichuses CCLIB_ADSR_IMPL.pd
+4) CCLIB_MIDIOSC_ENV_FM - CCLIB_MIDIOSC_ENV with CCLIB_FMMOD_ADD as the Ugen.
+
+----------------------------------------------------------------------------------
+CONTROLS:
+1) CCLIB_MASTER_CONTROLS.pd & CCLIB_MASTER_OUT.pd - provides basic controls to 
+output, including volume, graph, limmiting.
+
+2) CCLIB_MASTER_OUT_SFTEST1 - currently not working.
+
+
+----------------------------------------------------------------------------------
+ANALYSIS:
+1) CcLIB_SPECTRUM1.pd - first shot at a spectrum analyzer - could use some cleaning up.
+
+
+----------------------------------------------------------------------------------
+FileI/O:
+1) CCLIB_MASTER_RBUF.pd - first shot at a basic file i/o mechanism
+& CCLIB_MASTER_RBUF_ENH same but with control stuff built-in.
+
+2) CCLIB_MASTER_WBUF.Pd & CCLIB_MASTER_WBUF_ENH.Pd - same as #1 but for writing.

@@ -1,0 +1,809 @@
+#N canvas 344 50 1018 686 12;
+#X obj 4 6 cnv 15 970 60 empty empty empty 20 12 0 14 -261884 -66577
+0;
+#X obj 627 325 cnv 15 350 550 empty empty empty 20 12 0 14 -225271
+-66577 0;
+#N canvas 0 50 1362 618 fft-analysis 0;
+#X obj 227 512 *~;
+#X obj 196 512 *~;
+#X obj 196 534 -~;
+#X obj 404 512 *~;
+#X obj 373 512 *~;
+#X obj 373 534 +~;
+#X obj 400 208 *~;
+#X obj 369 208 *~;
+#X obj 246 203 *~;
+#X obj 215 203 *~;
+#X obj 215 232 +~;
+#X obj 316 336 *~;
+#X obj 146 873 *~;
+#X obj 463 476 rfft~;
+#X obj 518 115 rfft~;
+#X obj 607 708 *~;
+#X obj 1223 404 r window-size;
+#X obj 789 278 r sample-rate;
+#X obj 735 183 f;
+#X obj 1127 78 r sample-rate;
+#X obj 1176 128 r window-size;
+#X obj 1125 124 t b f;
+#X obj 1129 162 /;
+#X obj 637 708 *~;
+#X obj 146 837 *~;
+#X obj 168 781 rifft~;
+#X obj 146 908 outlet~;
+#X obj 699 134 bang~;
+#X obj 736 559 line~;
+#X obj 1129 184 * 1000;
+#X obj 1127 102 * 4;
+#X obj 879 107 r speed;
+#X obj 786 106 r location;
+#X obj 788 183 +;
+#X obj 879 152 *;
+#X msg 786 129 0;
+#X obj 773 430 +;
+#X obj 736 360 t f f;
+#X msg 736 536 \$1 \, \$2 \$3;
+#X obj 736 512 pack 0 0 0;
+#X obj 789 301 / 1000;
+#X obj 736 328 *;
+#X obj 1160 503 / 4;
+#X obj 1160 527 sig~;
+#X obj 827 593 +~;
+#X text 1157 108 (overlap times parent SR);
+#X text 1161 96 local sample rate;
+#X obj 108 116 tabreceive~ phase-real;
+#X obj 286 336 *~;
+#X obj 286 358 +~;
+#X obj 286 382 rsqrt~;
+#X obj 369 236 -~;
+#X obj 263 413 *~;
+#X obj 326 413 *~;
+#X obj 306 116 tabreceive~ phase-imag;
+#X obj 64 812 sig~;
+#X obj 48 729 t b f;
+#X msg 48 753 1;
+#X obj 64 781 /;
+#X obj 196 576 tabsend~ phase-real;
+#X obj 373 574 tabsend~ phase-imag;
+#X obj 19 167 sig~ 1.5e-020;
+#X obj 879 129 * 0.01;
+#X obj 786 152 s speed;
+#X obj 916 224 s see-location;
+#X floatatom 1160 447 0 0 0 0 - - -;
+#X obj 1160 424 *;
+#X obj 1159 280 r transpo;
+#X obj 1161 324 + 69;
+#X obj 1161 349 mtof;
+#X obj 1160 374 / 440;
+#X obj 1160 399 t b f;
+#X obj 48 708 r window-size;
+#X obj 719 719 tabreceive~ hanning;
+#X obj 789 649 tabread4~ sample;
+#X obj 653 650 tabread4~ sample;
+#X text 185 871 Hanning Window;
+#X text 43 685 Calculate 1/window size;
+#X text 221 776 Inverse Real FFT to create output signal;
+#X text 181 838 Normalize by 1/ windowsize;
+#X text 230 534 Real part;
+#X text 406 534 Imaginary Part;
+#X text 31 341 Normalize each sample;
+#X text 51 504 Complex mult.;
+#X text 52 523 =Time Domain conv.;
+#X text 47 581 For next block;
+#X text 209 907 <---Time Domain OUTPUT - windowsize \, overlap add
+\, handled;
+#X text 639 627 ----II. Read \, Window \, FFT TD input into FD Input---
+;
+#X text 56 664 ---V. TD Output - IFFT \, Normalize \, Window \, OA
+\, TD output---;
+#X text 662 670 Last TD Input;
+#X text 801 670 Current TD Input;
+#X text 513 94 Last FD Input;
+#X text 455 449 Current FD Input;
+#X text 47 567 Save output;
+#X text 51 539 =Phase addition;
+#X text 29 355 to strip out amplitude;
+#X text 30 372 this is why division denom.;
+#X text 31 387 is skipped above;
+#X text 216 924 by PD automatically. ***CONSTANT FOR ALL OTHER CALCULATIONS
+;
+#X text 229 141 complex div of last output;
+#X text 227 159 over last input - w/o complex;
+#X text 223 178 denominator part (doesn't matter);
+#X text 32 440 --------IV. Add Phase diff to current input ----;
+#X text 39 457 ***THIS PRESERVES ACTUAL FREQ OF EACH BIN!!!***;
+#X text 32 1094 1 FFT gets us to arrays of cos's & sin coeefficients
+for;
+#X text 56 1107 N/2 - 1 freq bands (A Cos(x) + B sin(x));
+#X text 30 1125 2 Polar Conversion gives us array of magnitudes & phases
+;
+#X text 135 1139 |;
+#X text 55 1139 M cos(x + O);
+#X text 28 1152 3 Euler gets us to complex exponential M e ^ j O;
+#X text 411 1152 -;
+#X text 517 1102 4 This tells us that complex mult: M1 * M2 \, 1 +
+2;
+#X text 536 1117 and complex div: M1 / M2 \, 1 - 2 (zeros are thetas)
+;
+#X text 515 1140 5 change in phase over 2 blocks gives actual freq.
+;
+#X text 509 1156 add phase offset of last block to current to keep
+real pitch;
+#X text 510 1171 not just the base pitch of the freq band;
+#X text 1203 437 Read window-size;
+#X text 1202 453 If equal to output w.s.;
+#X text 1201 469 then no pitch change;
+#X text 1182 171 Read Window Time (msec);
+#X text 1240 277 Adjust read w.s;
+#X text 1239 291 over constant;
+#X text 1241 305 read time;
+#X text 1241 321 (defined in A);
+#X text 860 598 windowsize/4 samples apart;
+#X text 1123 261 ~~C. TRANSPOSITION (WindowSize)~~;
+#X text 1183 188 1000 * w.s. / local s.r.;
+#X text 722 458 start;
+#X text 772 458 end;
+#X text 782 351 next start;
+#X text 782 364 (samples);
+#X text 1110 57 ~~A. CONSTANT - Read Window Time~~;
+#X text 822 190 speed% * w.t.;
+#X text 819 461 window;
+#X text 1200 517 read hop size;
+#X text 1201 532 samples;
+#X text 782 75 new loc (ms);
+#X text 818 474 time(ms);
+#X text 781 86 reset speed;
+#X text 821 177 start +=;
+#X text 819 204 (ms);
+#X text 696 63 ~~B. SPEED - (inc start pos) ~~;
+#X text 877 89 inc amount;
+#X text 1028 227 (ms);
+#X text 695 173 next;
+#X text 688 185 start;
+#X text 695 197 (ms);
+#X text 718 468 (samp);
+#X text 860 586 Last & current always start;
+#X text 770 469 =w.s.;
+#X text 764 479 (samp);
+#X text 685 86 bang~ for;
+#X text 684 99 each step;
+#X text 677 113 (ws/overlap);
+#X text 944 663 bang~ hits every time parent feeds subpatch \, ws/ol
+;
+#X text 943 676 samp. but sub must process that whole window B4;
+#X text 941 689 the next feeding. that's why local s.r. is ol*sr;
+#X text 944 699 but conversion for start samp uses sr.;
+#X text 846 298 see notes;
+#X text 771 330 below block~;
+#X text 1203 483 =2^(s/12) where s = semis;
+#X obj 1097 1110 switch~ 2048 4;
+#X obj 1096 808 inlet;
+#X obj 1229 1013 loadbang;
+#X msg 1191 1078 0;
+#X obj 1159 306 nbx 5 14 -1e+037 1e+037 0 0 empty empty empty 0 -8
+0 10 -262144 -1 -1 0 256;
+#X obj 1154 808 r tglPvocEngine;
+#X obj 1096 843 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
+0 1;
+#X obj 1195 913 select 0;
+#X obj 764 253 s see-location-s;
+#X text 698 39 -----------I. Calc Start Pos & Length of next T.D. input
+Block------------------------, f 86;
+#X text 7 0 The Phase Vocoder Engine - Patch is by Miller Puckette
+\, Annotations by Krista Campbell See Follow Right to left - Roman
+numerals and letters in order Theory notes at bottom of patch, f 96
+;
+#X text 20 66 ----III. Calc Phase difference of Last output - Last
+input----------------, f 76;
+#X text 35 1076 ----Theory--------------------------------------------------------------------------------------------------------
+, f 114;
+#X obj 1096 869 t i i;
+#X msg 1195 941 \; speed-set set 0 \; location-set set 0;
+#X msg 1250 1078 \; speed-set set 0 \; location-set set 0;
+#X obj 765 228 / 1000;
+#X msg 938 254 set \$1;
+#X obj 938 290 s location-set;
+#X text 890 178 <----Move Forward;
+#X obj 979 145 s speed-set;
+#X msg 979 119 set \$1;
+#X text 1094 787 START/STOP;
+#N canvas 349 190 450 299 pvocEngineInit 0;
+#X obj 31 26 loadbang;
+#X msg 31 56 \; window-size 2048 \; transpo 0 \;;
+#X obj 210 22 loadbang;
+#X obj 210 47 samplerate~;
+#X obj 209 72 s sample-rate;
+#X obj 9 151 r bngResetSpeed;
+#X msg 10 178 0;
+#X obj 66 220 s speed;
+#X obj 145 152 r bngSpeedNorm;
+#X msg 145 177 100;
+#X msg 267 180 50;
+#X msg 297 222 1;
+#X msg 341 248 -100;
+#X obj 267 152 r bngSpeedHalf;
+#X obj 297 195 r bngSpeedHundredth;
+#X obj 339 221 r bngSpeedRev;
+#X obj 64 318 s location;
+#X msg 77 283 0;
+#X obj 76 256 r bngSetLocZero;
+#X msg 222 301 0;
+#X obj 219 274 r bngResetTranspo;
+#X obj 210 337 s transpo-set;
+#X connect 0 0 1 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 5 0 6 0;
+#X connect 6 0 7 0;
+#X connect 8 0 9 0;
+#X connect 9 0 7 0;
+#X connect 10 0 7 0;
+#X connect 11 0 7 0;
+#X connect 12 0 7 0;
+#X connect 13 0 10 0;
+#X connect 14 0 11 0;
+#X connect 15 0 12 0;
+#X connect 17 0 16 0;
+#X connect 18 0 17 0;
+#X connect 19 0 21 0;
+#X connect 20 0 19 0;
+#X restore 1280 4 pd pvocEngineInit;
+#X connect 0 0 2 1;
+#X connect 1 0 2 0;
+#X connect 2 0 59 0;
+#X connect 2 0 25 0;
+#X connect 3 0 5 1;
+#X connect 4 0 5 0;
+#X connect 5 0 60 0;
+#X connect 5 0 25 1;
+#X connect 6 0 51 1;
+#X connect 7 0 51 0;
+#X connect 8 0 10 1;
+#X connect 9 0 10 0;
+#X connect 10 0 52 1;
+#X connect 10 0 48 0;
+#X connect 10 0 48 1;
+#X connect 11 0 49 1;
+#X connect 12 0 26 0;
+#X connect 13 0 1 1;
+#X connect 13 0 3 1;
+#X connect 13 1 0 1;
+#X connect 13 1 4 1;
+#X connect 14 0 9 1;
+#X connect 14 0 7 1;
+#X connect 14 1 6 1;
+#X connect 14 1 8 1;
+#X connect 15 0 14 0;
+#X connect 16 0 66 0;
+#X connect 17 0 40 0;
+#X connect 18 0 33 0;
+#X connect 18 0 41 0;
+#X connect 18 0 64 0;
+#X connect 18 0 177 0;
+#X connect 18 0 178 0;
+#X connect 19 0 30 0;
+#X connect 20 0 22 0;
+#X connect 21 0 22 0;
+#X connect 21 1 22 1;
+#X connect 22 0 29 0;
+#X connect 23 0 13 0;
+#X connect 24 0 12 0;
+#X connect 25 0 24 1;
+#X connect 27 0 18 0;
+#X connect 28 0 44 0;
+#X connect 28 0 75 0;
+#X connect 29 0 39 2;
+#X connect 29 0 34 1;
+#X connect 30 0 21 0;
+#X connect 31 0 62 0;
+#X connect 31 0 182 0;
+#X connect 32 0 35 0;
+#X connect 32 0 18 1;
+#X connect 33 0 18 1;
+#X connect 34 0 33 1;
+#X connect 35 0 63 0;
+#X connect 36 0 39 1;
+#X connect 37 0 39 0;
+#X connect 37 1 36 0;
+#X connect 38 0 28 0;
+#X connect 39 0 38 0;
+#X connect 40 0 41 1;
+#X connect 41 0 37 0;
+#X connect 42 0 43 0;
+#X connect 43 0 44 1;
+#X connect 44 0 74 0;
+#X connect 47 0 9 0;
+#X connect 47 0 6 0;
+#X connect 48 0 49 0;
+#X connect 49 0 50 0;
+#X connect 50 0 52 0;
+#X connect 50 0 53 0;
+#X connect 51 0 53 1;
+#X connect 51 0 11 0;
+#X connect 51 0 11 1;
+#X connect 52 0 1 0;
+#X connect 52 0 4 0;
+#X connect 53 0 0 0;
+#X connect 53 0 3 0;
+#X connect 54 0 7 0;
+#X connect 54 0 8 0;
+#X connect 55 0 24 0;
+#X connect 56 0 57 0;
+#X connect 56 1 58 1;
+#X connect 57 0 58 0;
+#X connect 58 0 55 0;
+#X connect 61 0 10 0;
+#X connect 62 0 34 0;
+#X connect 65 0 42 0;
+#X connect 65 0 36 1;
+#X connect 66 0 65 0;
+#X connect 67 0 165 0;
+#X connect 68 0 69 0;
+#X connect 69 0 70 0;
+#X connect 70 0 71 0;
+#X connect 71 0 66 0;
+#X connect 71 1 66 1;
+#X connect 72 0 56 0;
+#X connect 73 0 23 1;
+#X connect 73 0 15 1;
+#X connect 73 0 12 1;
+#X connect 74 0 23 0;
+#X connect 75 0 15 0;
+#X connect 162 0 167 0;
+#X connect 163 0 164 0;
+#X connect 163 0 176 0;
+#X connect 164 0 161 0;
+#X connect 165 0 68 0;
+#X connect 166 0 167 0;
+#X connect 167 0 174 0;
+#X connect 168 0 175 0;
+#X connect 174 0 161 0;
+#X connect 174 1 168 0;
+#X connect 177 0 169 0;
+#X connect 178 0 179 0;
+#X connect 182 0 181 0;
+#X restore 639 656 pd fft-analysis;
+#X obj 639 758 CCLIB_MASTER_OUT;
+#X obj 626 325 cnv 15 350 30 empty empty PhaseVocoderAwesomeness 50
+15 1 20 -159808 -262144 0;
+#X obj 630 360 tgl 40 0 tglPvocEngine start-pvoc empty 0 -6 0 8 -159808
+-262144 -1 0 1;
+#N canvas 260 50 651 706 phase-tables 0;
+#X msg 167 564 \; phase-real resize 4096 \; phase-imag resize 4096
+;
+#N canvas 0 50 450 300 (subpatch) 0;
+#X array phase-real 4096 float 0;
+#X coords 0 1 4095 -1 200 140 1;
+#X restore 100 20 graph;
+#N canvas 0 50 450 300 (subpatch) 0;
+#X array phase-imag 4096 float 0;
+#X coords 0 1 4095 -1 200 140 1;
+#X restore 106 192 graph;
+#X restore 654 712 pd phase-tables;
+#N canvas 68 50 775 706 hanning-window 0;
+#X obj 92 206 phasor~;
+#X obj 92 234 cos~;
+#X obj 23 328 tabwrite~ hanning;
+#X obj 30 252 -~;
+#X obj 28 218 sig~ 1;
+#X msg 37 180 0;
+#X text 141 13 CALCULATE HANNING;
+#X text 141 27 WINDOW TABLE;
+#X obj 93 171 sig~;
+#X text 175 148 sample rate / window size;
+#X msg 23 144 bang;
+#X obj 66 269 sig~ 0.5;
+#X obj 49 300 *~;
+#X obj 94 80 samplerate~;
+#X obj 25 23 r window-size;
+#X obj 25 53 t b f;
+#X msg 275 547 \; hanning resize 4096;
+#X obj 93 132 /;
+#X msg 46 511 \; hanning const 0;
+#X floatatom 179 181 5 0 0 0 - - -, f 5;
+#X obj 252 53 bng 15 250 50 0 empty empty empty 20 8 0 8 -262144 -1
+-1;
+#X floatatom 220 109 5 0 0 0 - - -, f 5;
+#N canvas 0 50 450 300 (subpatch) 0;
+#X array hanning 4096 float 0;
+#X coords 0 1 4095 -1 200 140 1;
+#X restore 361 276 graph;
+#X connect 0 0 1 0;
+#X connect 1 0 3 1;
+#X connect 3 0 12 0;
+#X connect 4 0 3 0;
+#X connect 5 0 0 1;
+#X connect 8 0 0 0;
+#X connect 10 0 2 0;
+#X connect 10 0 5 0;
+#X connect 11 0 12 1;
+#X connect 12 0 2 0;
+#X connect 13 0 17 0;
+#X connect 14 0 15 0;
+#X connect 14 0 21 0;
+#X connect 15 0 13 0;
+#X connect 15 0 10 0;
+#X connect 15 1 17 1;
+#X connect 17 0 8 0;
+#X connect 17 0 19 0;
+#X connect 20 0 13 0;
+#X restore 653 686 pd hanning-window;
+#X obj 336 524 cnv 15 280 350 empty empty RecordSample 20 12 0 16 -261682
+-66577 0;
+#X obj 20 780 cnv 15 300 95 empty empty empty 20 12 0 16 -204786 -66577
+0;
+#X obj 335 86 cnv 15 280 435 empty empty OutputControls 20 12 0 14
+-262131 -66577 0;
+#X floatatom 358 259 5 0 0 0 - - -, f 5;
+#X obj 508 124 tgl 20 0 gtgl_mute empty Mute 0 -10 2 10 -232576 -1
+-1 0 -1;
+#X obj 556 646 tgl 15 0 g_tgl_ViewInput empty ViewInput -40 10 2 8
+-258113 -1 -1 0 1;
+#X obj 467 126 vsl 20 120 0 0.99 0 0 gvsl_limiter gvsl_limiter_r Limiter
+0 -10 2 8 -232576 -1 -1 11900 1;
+#X floatatom 467 258 6 0 0 0 - - -, f 6;
+#X obj 358 125 vsl 20 120 0 127 0 0 ghsl_mastervol empty Volume 0 -10
+0 8 -232576 -1 -1 0 1;
+#X obj 414 126 vu 20 120 gvu_master_r Meter 0 -10 0 8 -233017 -1 0
+0;
+#X floatatom 413 259 5 0 0 0 - - -, f 5;
+#N canvas 0 50 1366 686 (subpatch) 0;
+#X array tblMasterOut 128 float 2;
+#X coords 0 1 128 -1 200 140 1;
+#X restore 379 306 graph;
+#X text 340 493 Implemented in CCLIB_MASTER_OUT;
+#X obj 17 227 cnv 15 300 290 empty empty MasterSample 20 12 0 16 -204800
+-66577 0;
+#N canvas 342 68 450 300 (subpatch) 0;
+#X array sample 3.4944e+006 float 0;
+#X coords 0 -1 3.4944e+006 1 250 150 1 0 0;
+#X restore 56 266 graph;
+#X obj 638 842 dac~;
+#X msg 24 452 \; sample const 0;
+#X obj 24 427 bng 20 250 50 0 empty empty empty 17 7 0 10 -4034 -1
+-1;
+#X text 47 426 Clear sample;
+#X msg 169 480 \; sample resize \$1;
+#X text 215 423 Resize(sec);
+#X obj 356 553 tgl 30 0 g_EnableADC empty empty 0 -6 0 8 -258113 -262144
+-1 0 1;
+#N canvas 386 50 907 612 kbRecordSample 0;
+#X obj 46 476 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 27 195 adc~;
+#X obj 28 228 *~;
+#X obj 227 538 rmstodb;
+#X obj 227 579 - 135;
+#X obj 227 603 s vuInput;
+#X obj 28 542 tabwrite~ sample;
+#X obj 16 113 switch~;
+#X obj 16 82 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
+;
+#X text 18 18 Turn on/off audio in this subpatch;
+#X msg 251 435 \; tblMasterIn xticks 0 5 10 \, yticks 0 0.25 1 \, xlabel
+-1.1 0 25 50 75 100 128 \, ylabel -5 -1 -0.75 -0.5 -0.25 0.25 0.5 0.75
+1;
+#X obj 270 338 tabwrite~ tblMasterIn;
+#X obj 269 309 metro 50;
+#X obj 269 285 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 269 258 r g_tgl_ViewInput;
+#X obj 16 50 r g_EnableADC;
+#X obj 247 381 loadbang;
+#X obj 271 157 dbtorms;
+#X obj 271 185 pack 0 50;
+#X obj 270 211 line~;
+#X obj 271 130 r g_InputVol;
+#X floatatom 374 184 5 0 0 0 - - -, f 5;
+#X obj 251 413 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X floatatom 302 555 5 0 0 0 - - -, f 5;
+#X text 418 258 This is used to write the input signal to a table for
+viewing like a scope;
+#X text 375 126 input volume slider;
+#X text 27 171 MASTER AUDIO IN;
+#X text 47 502 RECORD SAMPLE;
+#X obj 46 444 r bng_RecordSample;
+#X obj 28 319 clip~ -0.9 0.9;
+#X floatatom 455 595 5 0 0 0 - - -, f 5;
+#X obj 227 515 snapshot~ 8192;
+#X connect 0 0 6 0;
+#X connect 1 0 2 0;
+#X connect 2 0 29 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 0;
+#X connect 8 0 7 0;
+#X connect 12 0 11 0;
+#X connect 13 0 12 0;
+#X connect 14 0 13 0;
+#X connect 15 0 8 0;
+#X connect 16 0 22 0;
+#X connect 17 0 18 0;
+#X connect 17 0 21 0;
+#X connect 18 0 19 0;
+#X connect 19 0 2 1;
+#X connect 20 0 17 0;
+#X connect 22 0 23 0;
+#X connect 22 0 10 0;
+#X connect 23 0 4 0;
+#X connect 28 0 0 0;
+#X connect 29 0 6 0;
+#X connect 29 0 11 0;
+#X connect 31 0 3 0;
+#X connect 31 0 30 0;
+#X restore 470 846 pd kbRecordSample;
+#N canvas 113 62 1142 552 (subpatch) 0;
+#X array tblMasterIn 128 float 2;
+#X coords 0 1 128 -1 200 140 1;
+#X restore 372 667 graph;
+#X obj 557 279 tgl 20 0 gtgl_view_output empty ViewOutput 0 -10 2 8
+-232576 -1 -1 0 1;
+#X obj 551 547 vsl 20 80 0 127 0 0 g_InputVol empty Input 0 -10 0 8
+-258113 -1 -1 0 1;
+#X text 393 557 Enable Input;
+#X obj 356 593 bng 30 250 50 0 bng_RecordSample empty empty 17 7 0
+10 -258113 -262144 -1;
+#X text 389 594 RECORD SAMPLE;
+#X obj 169 427 nbx 3 20 -1e+037 1e+037 0 0 s-ResizeSample empty empty
+0 -8 0 12 -4034 -1 -1 0 256;
+#X obj 18 523 cnv 15 300 250 empty empty LoadSample 20 12 0 16 -261682
+-66577 0;
+#X obj 35 556 bng 30 250 50 0 empty empty empty 0 0 0 8 -4034 -4034
+-1;
+#X obj 35 600 openpanel;
+#X msg 35 623 \; read-sample \$1;
+#X text 73 564 Bang to load sample;
+#X obj 170 672 nbx 10 20 -1e+037 1e+037 0 0 empty samplength empty
+0 -8 0 11 -261682 -1 -1 0 256;
+#X text 39 671 Length (samples);
+#X obj 170 703 nbx 10 20 -1e+037 1e+037 0 0 empty samplength_ms empty
+0 -8 0 11 -261682 -1 -1 0 256;
+#X text 40 695 Length (ms);
+#X obj 624 85 cnv 15 350 225 empty empty Simple_Playback 20 12 0 18
+-261682 -66577 0;
+#N canvas 0 50 1139 608 kbPlaySample 0;
+#X obj 122 540 tabread4~ sample;
+#X obj 123 570 throw~ cbMasterOut;
+#X obj 21 251 phasor~;
+#X obj 89 375 *~;
+#X obj 122 509 +~;
+#X obj 21 57 r seglength;
+#X obj 132 354 nbx 7 14 -1e+037 1e+037 0 0 seglength empty empty 0
+-8 0 10 -262144 -1 -1 0 256;
+#X obj 145 487 nbx 7 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 0 256;
+#X obj 66 153 nbx 5 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 0 256;
+#X text 128 152 Speed (100 is normal);
+#X obj 419 119 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 419 167 switch~;
+#X obj 146 56 r insamprate;
+#X obj 21 89 expr ($f2 / $f1);
+#X obj 66 170 / 100;
+#X obj 21 218 * 1;
+#X obj 65 194 t b f;
+#X msg 387 219 0;
+#X obj 419 87 r tglkbPlaySample;
+#X text 89 249 outputs 0 to 1 in specified freq;
+#X text 118 374 multiply to get entire legnth of segment;
+#X text 159 510 add to the start location;
+#X text 422 219 reset phasor;
+#X text 424 136 Turn local dsp on/off;
+#X text 30 106 normal playback speed freq = len/samprate;
+#X text 51 213 Scale freq to adjust speed;
+#X text 257 539 interpolating sample reader;
+#X text 272 568 standard output bus;
+#X text 204 348 seg length samples;
+#X text 221 485 Start loc samples;
+#X obj 385 284 nbx 5 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 0 256;
+#X text 442 279 seg length ms;
+#X obj 132 301 / 1000;
+#X obj 132 327 * 44100;
+#X obj 190 303 r insamprate;
+#X obj 158 438 * 44100;
+#X obj 356 432 r insamprate;
+#X obj 381 408 nbx 5 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 0 256;
+#X obj 66 130 r kbPlaySampleSpeed;
+#X obj 385 256 r kbPlaySampleSegLen;
+#X obj 522 328 r kbPlaySampleStartLoc;
+#X obj 146 462 / 1000;
+#X text 440 404 start loc ms;
+#X obj 499 355 t b f;
+#X text 16 15 kbPlaySample - Simple Sample Player - krista campbell
+;
+#X obj 710 480 r insamprate;
+#X obj 636 501 / 44100;
+#X obj 636 459 snapshot~;
+#X obj 635 418 bang~;
+#X text 625 393 Show the location in ms;
+#X obj 636 529 * 1000;
+#X msg 636 559 set \$1;
+#X obj 635 591 s r-kbplaysampleStartLoc;
+#X obj 746 547 s r-kbplaysampleStartLoc-sec;
+#X connect 0 0 1 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 0 0;
+#X connect 4 0 47 0;
+#X connect 5 0 13 0;
+#X connect 6 0 3 1;
+#X connect 7 0 4 1;
+#X connect 8 0 14 0;
+#X connect 10 0 11 0;
+#X connect 10 0 17 0;
+#X connect 12 0 13 1;
+#X connect 13 0 15 0;
+#X connect 14 0 16 0;
+#X connect 15 0 2 0;
+#X connect 16 0 15 0;
+#X connect 16 1 15 1;
+#X connect 17 0 2 1;
+#X connect 18 0 10 0;
+#X connect 30 0 32 0;
+#X connect 32 0 33 0;
+#X connect 33 0 6 0;
+#X connect 34 0 33 1;
+#X connect 35 0 41 0;
+#X connect 36 0 35 1;
+#X connect 37 0 35 0;
+#X connect 38 0 8 0;
+#X connect 39 0 30 0;
+#X connect 40 0 43 0;
+#X connect 41 0 7 0;
+#X connect 43 0 17 0;
+#X connect 43 1 37 0;
+#X connect 45 0 46 1;
+#X connect 46 0 50 0;
+#X connect 46 0 53 0;
+#X connect 47 0 46 0;
+#X connect 48 0 47 0;
+#X connect 50 0 51 0;
+#X connect 51 0 52 0;
+#X coords 0 608 1 607 85 60 0;
+#X restore 842 281 pd kbPlaySample;
+#X obj 647 110 tgl 30 0 tglkbPlaySample empty empty 17 7 0 10 -260097
+-262144 -1 0 1;
+#X obj 647 151 nbx 8 18 -1e+037 1e+037 0 0 kbPlaySampleSpeed samplerspeed
+empty 0 -8 0 10 -260097 -1 -1 0 256;
+#X obj 647 246 nbx 8 18 -1e+037 1e+037 0 0 kbPlaySampleSegLen samplength_ms
+empty 0 -8 0 10 -232576 -1 -1 0 256;
+#X obj 647 215 nbx 8 18 -1e+037 1e+037 0 0 empty r-kbplaysampleStartLoc-sec
+empty 0 -8 0 10 -162280 -1 -1 0 256;
+#X text 684 113 Playback sample;
+#X text 732 244 Segment Length (ms);
+#X text 672 365 PVOC ENGINE (Time Stretch/Freeze/Zoom);
+#X text 772 757 <---MASTER OUTPUT CONTROL;
+#X text 767 654 <---PHASE VOCODER ENGINE;
+#X text 681 840 <--------------MASTER AUDIO OUTPUT;
+#X text 798 683 FFT Windowing;
+#X text 799 711 FFT Processing Tables;
+#X text 734 148 Speed (in hundredths);
+#X obj 631 410 nbx 7 20 -1e+037 1e+037 0 0 speed speed-set empty 0
+-8 0 16 -4034 -13381 -262144 0 256;
+#X text 746 409 Speed (in hundredths);
+#X obj 632 540 nbx 7 20 -1e+037 1e+037 0 0 empty see-location-s empty
+0 -8 0 16 -228856 -99865 -262144 0 256;
+#X obj 169 454 * 44100;
+#X obj 631 435 bng 20 250 50 0 bngSpeedNorm empty Norm 0 25 1 8 -4034
+-262144 -1;
+#X text 10 7 kbPvoc.pd - A Phase Vocoder allowing for audio stretching
+\, zooming \, freezing \, like an "audio microscope" \, based on Miller
+Puckette's Phase Vocoder patch "I7.phase.vocoder.pd".;
+#X obj 631 472 nbx 7 20 -1e+037 1e+037 0 0 location location-set empty
+0 -8 0 16 -4034 -13381 -262144 0 256;
+#X text 761 472 Location (ms \, stops motion);
+#X text 748 536 Location (seconds Readonly);
+#X text 647 280 Simple Sampler Engine;
+#X obj 647 183 nbx 8 18 -1e+037 1e+037 0 0 kbPlaySampleStartLoc r-kbplaysampleStartLoc
+empty 0 -8 0 10 -260097 -1 -1 0 256;
+#X text 733 182 Start Location (ms);
+#X text 733 212 Location (seconds readonly);
+#X obj 677 435 bng 20 250 50 0 bngSpeedHundredth empty 100th 0 25 1
+8 -261234 -262144 -1;
+#X obj 745 474 bng 15 250 50 0 bngSetLocZero empty Reset 0 20 1 8 -4034
+-262144 -1;
+#X obj 654 435 bng 20 250 50 0 bngSpeedHalf empty Half 0 25 1 8 -257985
+-262144 -1;
+#X obj 700 435 bng 20 250 50 0 bngResetSpeed empty Stop 0 25 1 8 -258113
+-262144 -1;
+#N canvas 689 310 563 572 kbSample 0;
+#X obj 25 13 r read-sample;
+#X obj 25 64 unpack s f;
+#X obj 25 174 soundfiler;
+#X obj 25 90 t s b;
+#X obj 25 125 pack s s;
+#X msg 25 150 read -resize \$1 \$2;
+#X obj 80 36 44100;
+#X obj 25 37 t a b;
+#X obj 25 237 /;
+#X obj 123 64 s insamprate;
+#X obj 81 89 symbol sample;
+#X obj 35 198 s samplength;
+#X obj 63 237 r insamprate;
+#X obj 25 269 * 1000;
+#X obj 26 297 s samplength_ms;
+#X msg 34 412 \; sample yticks 0 0.25 1 \, ylabel -5 -1 -0.75 -0.5
+-0.25 0 0.25 0.5 0.75 1 \, xticks 0 44100 5;
+#X obj 37 348 loadbang;
+#X text 120 355 Auto initialize the array on load;
+#X obj 181 295 s samplength_s;
+#X obj 212 187 bang;
+#X msg 351 155 \; samplerspeed 100;
+#X msg 213 220 \; r-kbplaysampleStartLoc 0;
+#X obj 144 499 r s-ResizeSample;
+#X obj 142 529 * 1000;
+#X msg 139 556 set \$1;
+#X obj 135 590 s samplength_ms;
+#X connect 0 0 7 0;
+#X connect 1 0 3 0;
+#X connect 1 1 9 0;
+#X connect 2 0 8 0;
+#X connect 2 0 11 0;
+#X connect 2 0 19 0;
+#X connect 3 0 4 0;
+#X connect 3 1 10 0;
+#X connect 4 0 5 0;
+#X connect 5 0 2 0;
+#X connect 6 0 9 0;
+#X connect 7 0 1 0;
+#X connect 7 1 6 0;
+#X connect 8 0 13 0;
+#X connect 8 0 18 0;
+#X connect 10 0 4 1;
+#X connect 12 0 8 1;
+#X connect 13 0 14 0;
+#X connect 16 0 15 0;
+#X connect 19 0 21 0;
+#X connect 19 0 20 0;
+#X connect 22 0 23 0;
+#X connect 23 0 24 0;
+#X connect 24 0 25 0;
+#X restore 186 745 pd kbSample;
+#X obj 723 435 bng 20 250 50 0 bngSpeedRev empty Rev 0 25 1 8 -159808
+-262144 -1;
+#X obj 631 505 nbx 7 20 -1e+037 1e+037 0 0 transpo transpo-set empty
+0 -8 0 16 -4034 -262144 -262144 0 256;
+#X obj 745 507 bng 15 250 50 0 bngResetTranspo empty Reset 0 20 1 8
+-4034 -262144 -1;
+#X text 761 505 Transposition (semitones);
+#X obj 16 87 cnv 15 300 130 empty empty MasterDSP 20 12 0 16 -261682
+-66577 0;
+#X obj 25 110 tgl 30 0 empty kb-dsp-state empty 17 7 0 10 -4034 -262144
+-1 0 1;
+#X msg 25 148 \; pd dsp \$1;
+#N canvas 0 50 450 170 kb-dsp-state 0;
+#X obj 11 64 r pd-dsp-started;
+#X obj 164 65 r pd-dsp-stopped;
+#X msg 164 91 set 0;
+#X msg 11 91 set 1;
+#X obj 55 139 s kb-dsp-state;
+#X text 8 4 captures changes to dsp state and sends set messages. suitable
+for sending to a checkbox kb;
+#X connect 0 0 3 0;
+#X connect 1 0 2 0;
+#X connect 2 0 4 0;
+#X connect 3 0 4 0;
+#X restore 181 191 pd kb-dsp-state;
+#X text 71 112 Turn on/off all DSP;
+#X text 27 781 For more information: @kristab3000;
+#X text 534 4 Main patch and subpatches by Krista Campbell.;
+#X text 35 797 PD Info Hub: http://puredata.info;
+#X text 35 814 Book: msp.ucsd.edu/techniques.htm;
+#X text 34 837 Or just Open Media menu-> Test Audio and Midi...;
+#X text 533 26 Except for: fft-analysis \, hanning-window \, phase
+tables by Miller Puckette \, annotated by Krista Campbell.;
+#X connect 2 0 3 0;
+#X connect 3 0 23 0;
+#X connect 3 0 23 1;
+#X connect 14 0 15 0;
+#X connect 16 0 11 0;
+#X connect 17 0 18 0;
+#X connect 25 0 24 0;
+#X connect 37 0 65 0;
+#X connect 39 0 40 0;
+#X connect 40 0 41 0;
+#X connect 65 0 27 0;
+#X connect 85 0 86 0;
