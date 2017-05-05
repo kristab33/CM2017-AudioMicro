@@ -1,6 +1,6 @@
 # CM2017-AudioMicro
-Phase Vocoder Based Audio Microscope from my Codemash 2017 Talk "Building an Audio Microscope"
-Krista Campbell 
+Phase Vocoder Based Audio Microscope from my Codemash 2017 Talk "Building an Audio Microscope",
+Updated 5/5/2017 for Stir Trek 2017 Talk "Building an Audio Microscope Vol. 2" by Krista Campbell 
 
 This runs on PureData (PD) by Miller Puckette and the patch itself is based upon the Phase Vocoder engine created by Miller Puckette. 
 
@@ -12,7 +12,9 @@ Getting Started:
 4. Double click kbStartPVoc.bat to Start ! 
 
 
-Also you can refer to my presentation CodemashAudioMicroscope2017-KCampbell.pptx for an overview! 
+Also you can refer to my presentation CodemashAudioMicroscope2017-KCampbell.pptx for an overview!
+Or my updated presentation StirTrekAudioMicro2017Vol2-KCampbell.pptx
+
 
 Please contact me if you have any questions or further interest! 
 kristab3000@gmail.com
